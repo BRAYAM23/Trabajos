@@ -1,0 +1,168 @@
+-- SQL script for creating a medical appointments database in SQLite
+
+-- Table: Pacientes
+CREATE TABLE Pacientes (
+    paciente_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT NOT NULL,
+    apellido TEXT NOT NULL,
+    documento_id TEXT UNIQUE NOT NULL,
+    fecha_nacimiento DATE NOT NULL,
+    telefono TEXT,
+    direccion TEXT,
+    correo TEXT
+);
+
+-- Table: Medicos
+CREATE TABLE Medicos (
+    medico_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT NOT NULL,
+    apellido TEXT NOT NULL,
+    especialidad TEXT NOT NULL,
+    telefono TEXT,
+    correo TEXT
+);
+
+-- Table: CentrosMedicos
+CREATE TABLE CentrosMedicos (
+    centro_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT NOT NULL,
+    direccion TEXT NOT NULL,
+    telefono TEXT,
+    correo TEXT
+);
+
+-- Table: MedicosCentros
+CREATE TABLE MedicosCentros (
+    medico_id INTEGER,
+    centro_id INTEGER,
+    PRIMARY KEY (medico_id, centro_id),
+    FOREIGN KEY (medico_id) REFERENCES Medicos(medico_id),
+    FOREIGN KEY (centro_id) REFERENCES CentrosMedicos(centro_id)
+);
+
+-- Table: Citas
+CREATE TABLE Citas (
+    cita_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    paciente_id INTEGER,
+    medico_id INTEGER,
+    fecha_cita DATE NOT NULL,
+    hora_cita TIME NOT NULL,
+    motivo TEXT,
+    FOREIGN KEY (paciente_id) REFERENCES Pacientes(paciente_id),
+    FOREIGN KEY (medico_id) REFERENCES Medicos(medico_id)
+);
+
+-- Table: HistorialMedico
+CREATE TABLE HistorialMedico (
+    historial_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    paciente_id INTEGER,
+    fecha DATE NOT NULL,
+    descripcion TEXT,
+    FOREIGN KEY (paciente_id) REFERENCES Pacientes(paciente_id)
+);
+
+-- Table: Usuarios
+CREATE TABLE Usuarios (
+    usuario_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre_usuario TEXT UNIQUE NOT NULL,
+    contrasena TEXT NOT NULL,
+    rol TEXT CHECK(rol IN ('admin', 'secretaria', 'medico')) NOT NULL,
+    nombre TEXT,
+    apellido TEXT,
+    telefono TEXT,
+    correo TEXT
+);
+
+-- Table: CitasUsuarios
+CREATE TABLE CitasUsuarios (
+    cita_id INTEGER,
+    usuario_id INTEGER,
+    PRIMARY KEY (cita_id, usuario_id),
+    FOREIGN KEY (cita_id) REFERENCES Citas(cita_id),
+    FOREIGN KEY (usuario_id) REFERENCES Usuarios(usuario_id)
+);
+
+
+-- Insertar pacientes
+INSERT INTO Pacientes (nombre, apellido, documento_id, fecha_nacimiento, telefono, direccion, correo)
+VALUES
+('Juan', 'Pérez', '12345678A', '1980-05-15', '555-1234', 'Calle Falsa 123', 'juan.perez@example.com'),
+('Ana', 'Gómez', '87654321B', '1992-09-22', '555-5678', 'Avenida Siempre Viva 456', 'ana.gomez@example.com'),
+('Laura', 'Martínez', '34567890C', '1985-12-05', '555-5679', 'Calle Nueva 321', 'laura.martinez@example.com'),
+('Pedro', 'Ramírez', '23456789D', '1978-04-23', '555-6780', 'Avenida Libertad 654', 'pedro.ramirez@example.com'),
+('Sofía', 'García', '45678901E', '1995-07-11', '555-7890', 'Plaza Mayor 789', 'sofia.garcia@example.com'),
+('Luis', 'Fernández', '56789012F', '2000-02-19', '555-8901', 'Calle del Sol 456', 'luis.fernandez@example.com');
+
+
+
+-- Insertar médicos
+INSERT INTO Medicos (nombre, apellido, especialidad, telefono, correo)
+VALUES
+('Dr. Carlos', 'Hernández', 'Cardiología', '555-8765', 'carlos.hernandez@example.com'),
+('Dra. María', 'López', 'Dermatología', '555-4321', 'maria.lopez@example.com'),
+('Dr. Javier', 'Paredes', 'Oftalmología', '555-5555', 'javier.paredes@example.com'),
+('Dra. Elena', 'Morales', 'Pediatría', '555-6666', 'elena.morales@example.com'),
+('Dr. Andrés', 'Castro', 'Gastroenterología', '555-7777', 'andres.castro@example.com'),
+('Dra. Marta', 'Vásquez', 'Endocrinología', '555-8888', 'marta.vasquez@example.com');
+
+
+
+-- Insertar centros médicos
+INSERT INTO CentrosMedicos (nombre, direccion, telefono, correo)
+VALUES
+('Centro Médico A', 'Calle de la Salud 789', '555-0000', 'contacto@centromedicoa.com'),
+('Clínica B', 'Paseo de la Medicina 101', '555-1111', 'info@clinicab.com'),
+('Hospital Central', 'Avenida de los Médicos 200', '555-2222', 'info@hospitalcentral.com'),
+('Policlínica Salud', 'Calle del Bienestar 150', '555-3333', 'contacto@policlinicasalud.com'),
+('Centro de Salud Integral', 'Calle de la Esperanza 175', '555-4444', 'contacto@saludintegral.com'),
+('Clínica Avanzada', 'Paseo de la Avanzada 300', '555-5555', 'info@clinicaavanzada.com');
+
+
+
+-- Insertar relación médicos-centros
+INSERT INTO MedicosCentros (medico_id, centro_id)
+VALUES
+(1, 1),  -- Dr. Carlos Hernández en Centro Médico A
+(2, 2),  -- Dra. María López en Clínica B
+(3, 3),  -- Dr. Andrés Castro en Hospital Central
+(4, 4),  -- Dra. Marta Vásquez en Policlínica Salud
+(5, 5),  -- Dr. Javier Paredes en Centro de Salud Integral
+(6, 6);  -- Dra. Elena Morales en Clínica Avanzada
+
+
+
+-- Insertar citas
+INSERT INTO Citas (paciente_id, medico_id, fecha_cita, hora_cita, motivo)
+VALUES
+(1, 1, '2024-09-10', '10:00:00', 'Chequeo general'),
+(2, 2, '2024-09-12', '11:30:00', 'Consulta dermatológica'),
+(3, 3, '2024-10-05', '09:30:00', 'Dolor abdominal'),
+(4, 4, '2024-10-07', '14:00:00', 'Revisión endocrina');
+
+
+-- Insertar historial médico
+INSERT INTO HistorialMedico (paciente_id, fecha, descripcion)
+VALUES
+(1, '2023-08-25', 'Revisión anual general'),
+(2, '2023-12-01', 'Examen ocular y revisión de visión'),
+(3, '2024-05-15', 'Efectuado estudio de ultrasonido abdominal'),
+(4, '2024-02-20', 'Evaluación de función tiroidea');
+
+
+-- Insertar usuarios
+INSERT INTO Usuarios (nombre_usuario, contrasena, rol, nombre, apellido, telefono, correo)
+VALUES
+('admin', 'adminpass', 'admin', 'Admin', 'User', '555-2222', 'admin@example.com'),
+('secretaria', 'secretariapass', 'secretaria', 'Laura', 'Martínez', '555-3333', 'laura.martinez@example.com'),
+('medico1', 'medico1pass', 'medico', 'Carlos', 'Hernández', '555-4444', 'carlos.hernandez@example.com'),
+('medico2', 'medico2pass', 'medico', 'Elena', 'Morales', '555-1100', 'elena.morales@example.com');
+
+
+
+-- Insertar citas-usuarios
+INSERT INTO CitasUsuarios (cita_id, usuario_id)
+VALUES
+(1, 2),  -- Cita 1 (Juan Pérez con Dr. Carlos Hernández) asociada con Secretaria Laura Martínez
+(2, 3),  -- Cita 2 (Ana Gómez con Dra. María López) asociada con Médico Carlos Hernández
+(3, 4),  -- Cita 3 (Sofía García con Dr. Andrés Castro) asociada con Médico Andrés Castro
+(4, 2);  -- Cita 4 (Luis Fernández con Dra. Marta Vásquez) asociada con Secretaria Laura Martínez
