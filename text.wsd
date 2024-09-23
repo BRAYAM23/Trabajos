@@ -1,0 +1,60 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class Cliente {
+  - nombre: String 
+  - email: String 
+  + Cliente(int id, String nombre, String email)
+  + String getNombre()
+  + String getEmail()
+}
+
+class Producto {
+  - nombreProducto: String 
+  - precio: double 
+  + Producto(int id, String nombreProducto, double precio)
+  + String getNombreProducto()
+  + double getPrecio()
+}
+
+class Pedido {
+  - Cliente: cliente
+  - Producto: producto
+  - int: cantidad
+  + Pedido(int id, Cliente cliente, Producto producto, int cantidad)
+  + Cliente getCliente()
+  + Producto getProducto()
+  + int getCantidad()
+  + double calcularTotal()
+}
+
+Cliente "1" -- "0..*" Pedido : >
+Producto "0..*" -- "1" Pedido : <
+
+class cliente1:Cliente << (C,#FFAAAA) >> {
+ nombre = "Juan Pérez"
+ email = "juan.perez@mail.com"
+}
+class cliente2:Cliente << (C,#7D2181) >> {
+ nombre = "Laura Gómez"
+email = "laura.gomez@mail.com"
+}
+class producto1:Producto<< (P,#AAFFAA) >>{ 
+ nombreProducto = "Laptop"
+ precio = 1200.00
+}
+class producto2:Producto<< (P,#AAFFAA) >> {
+ nombreProducto = "Smartphone"
+precio = 800.00
+}
+class pedido1:Pedido << (O,#FFFFAA) >>{ 
+ cliente = cliente1
+producto = producto1
+cantidad = 1
+}
+class pedido2:Pedido << (O,#FFFFAA) >>{ 
+ cliente = cliente2
+ producto = producto2
+ cantidad = 2
+}
+@enduml
