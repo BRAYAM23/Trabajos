@@ -1,0 +1,32 @@
+@startuml
+object libro {
+    nombre = "El Quijote"
+    precio = 29.99
+}
+
+object revista {
+    nombre = "National Geographic"
+    numeroEdicion = 203
+    precio = 5.99
+}
+
+object cliente {
+    nombre = "Juan Pérez"
+    email = "juan.perez@example.com"
+}
+
+object pedido1 {
+    producto = libro
+    cliente = cliente
+}
+
+object pedido2 {
+    producto = revista
+    cliente = cliente
+}
+
+pedido1 --  libro : "incluye"
+pedido1 -- cliente : "realizado por"
+pedido2 -- revista : "incluye"
+pedido2 -- cliente : "realizado por"
+@enduml
